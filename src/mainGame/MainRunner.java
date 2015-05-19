@@ -11,7 +11,7 @@ public class MainRunner extends PApplet {
 	int speed = 5;
 	static int deaths = 0;
 	int width = 1000, height = 750;
-	int level = 5;
+	int level = 1;
 	int x = 0, y = 0;
 	int size = 25;
 	int origX = 0, origY = 0;
@@ -59,6 +59,7 @@ public class MainRunner extends PApplet {
 			case 4: levelFour(); break;
 			case 5: levelFive(); break;
 			case 6: levelSix(); break;
+			case 7: levelSeven(); break;
 		}
 		
 		printIt("Deaths: " + deaths);
@@ -216,8 +217,8 @@ public class MainRunner extends PApplet {
 			coins.add(new Coins(495, 445, 15));
 			origCoins = (ArrayList<Coins>)coins.clone();
 			enemies = new ArrayList<Enemies>();
-			enemies.add(new Enemies(410, 360, 15, 410, 360, 600, 550, 'D', true, 5));
-			enemies.add(new Enemies(600, 360, 15, 410, 360, 600, 550, 'E', true, 5));
+			enemies.add(new Enemies(410, 360, 15, 410, 360, 600, 550, 'D', true, 10));
+			enemies.add(new Enemies(600, 360, 15, 410, 360, 600, 550, 'E', true, 10));
 			this.x = 407;
 			this.y = 307;
 			origX = x;
@@ -435,6 +436,92 @@ public class MainRunner extends PApplet {
 		resetBackground();
 		strokeWeight(5.0f);
 		
+		if (shouldSetup) {
+			speed = 5;
+			coins = new ArrayList<Coins>();
+			coins.add(new Coins(350, 250, 15));
+			coins.add(new Coins(350, 350, 15));
+			coins.add(new Coins(350, 450, 15));
+			coins.add(new Coins(650, 250, 15));
+			coins.add(new Coins(650, 350, 15));
+			coins.add(new Coins(650, 450, 15));
+			coins.add(new Coins(450, 450, 15));
+			coins.add(new Coins(550, 450, 15));
+			origCoins = (ArrayList<Coins>)coins.clone();
+			enemies = new ArrayList<Enemies>();
+			enemies.add(new Enemies(350, 250, 15, 310, 250, 400, 250, 'H', true, 5));
+			enemies.add(new Enemies(350, 350, 15, 310, 350, 400, 350, 'H', false, 5));
+			enemies.add(new Enemies(350, 450, 15, 310, 450, 400, 450, 'H', true, 5));
+			enemies.add(new Enemies(650, 250, 15, 610, 250, 700, 250, 'H', false, 5));
+			enemies.add(new Enemies(650, 350, 15, 610, 350, 700, 350, 'H', true, 5));
+			enemies.add(new Enemies(650, 450, 15, 610, 450, 700, 450, 'H', false, 5));
+			enemies.add(new Enemies(450, 450, 15, 450, 410, 450, 500, 'V', false, 5));
+			enemies.add(new Enemies(550, 450, 15, 550, 410, 550, 500, 'V', true, 5));
+			this.x = 338;
+			this.y = 138;
+			origX = x;
+			origY = y;
+			shouldSetup = false;
+		}
+		
+		line(300, 100, 400, 100);
+		line(400, 100, 400, 400);
+		line(300, 100, 300, 500);
+		line(300, 500, 700, 500);
+		line(400, 400, 600, 400);
+		line(600, 400, 600, 100);
+		line(700, 500, 700, 100);
+		line(600, 100, 700, 100);
+		
+		fill(75, 214, 80, 50);
+		strokeWeight(0);
+		rect(300, 100, 100, 100);
+		rect(600, 100, 100, 100);
+		
+		movePlayer();
+		
+		if (x < 300)
+			x = 300;
+		else if (x+size > 700)
+			x = 700-size;
+		
+		if (y < 100)
+			y = 100;
+		else if (y+size > 500)
+			y = 500-size;
+		
+		
+		if (y >= 100 && y < 400 && y+size-400 < 0) {
+			if (x+size > 400 && x < 600) {
+				if (x+size - 400 < 100)
+					x = 400-size;
+				else
+					x = 600;
+			}
+		}
+		
+		if (x+size > 400 && x < 600) {
+			if (y < 400)
+				y = 400;
+		}
+		
+		
+		drawPlayer();
+		
+		drawCoinsAndEnemies();
+		
+		removeCoinsAndEnemies();
+		
+		if (x+size >= 600 && x <= 700)
+			if (y+size >= 100 && y < 200)
+				if (coins.size() < 1)
+					nextLevel();
+	}
+	
+	public void levelSeven() {
+		resetBackground();
+		strokeWeight(5.0f);
+		
 	}
 	
 	public void movePlayer() {
@@ -536,10 +623,10 @@ public class MainRunner extends PApplet {
 		int rem = -1;
 		
 		for (int i = 0; i < coins.size(); i++) {
-			int xc1 = coins.get(i).getX();
-			int xc2 = coins.get(i).getX() + coins.get(i).getSize();
-			int yc1 = coins.get(i).getY();
-			int yc2 = coins.get(i).getY() + coins.get(i).getSize();
+			int xc1 = coins.get(i).getX() - coins.get(i).getSize()/2;
+			int xc2 = coins.get(i).getX() + coins.get(i).getSize()/2;
+			int yc1 = coins.get(i).getY() - coins.get(i).getSize()/2;
+			int yc2 = coins.get(i).getY() + coins.get(i).getSize()/2;
 			
 			int x2 = this.x + size;
 			int y2 = this.y + size;
@@ -556,10 +643,10 @@ public class MainRunner extends PApplet {
 			coins.remove(rem);
 		
 		for (Enemies e : enemies) {
-			int xc1 = e.getX();
-			int xc2 = e.getX() + e.getSize();
-			int yc1 = e.getY();
-			int yc2 = e.getY() + e.getSize();
+			int xc1 = e.getX() - e.getSize()/2;
+			int xc2 = e.getX() + e.getSize()/2;
+			int yc1 = e.getY() - e.getSize()/2;
+			int yc2 = e.getY() + e.getSize()/2;
 			
 			int x2 = this.x + size;
 			int y2 = this.y + size;
